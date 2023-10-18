@@ -1,9 +1,19 @@
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { OpenAI } from "langchain/llms/openai";
-import { loadQAStuffChain } from "langchain/chains";
-import { Document } from "langchain/document";
-import { timeout } from "./config";
+import { 
+    timeout,
+    indexName
+} from "./config";
+import { ConversationalRetrievalQAChain } from "langchain/chains";
+import { PineconeStore } from "langchain/vectorstores/pinecone";
+import { Pinecone } from "@pinecone-database/pinecone";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+
+export const client = new Pinecone ({
+    apiKey: process.env.PINECONE_API_KEY || "",
+    environment: process.env.PINECONE_ENVIRONMENT || ""
+})
+
 
 export const createPineconeIndex = async (
     client,
@@ -76,41 +86,24 @@ export const updatePinecone = async (
     }
 };
 
-export const getRelevantDocumentsAndQueryLLM = async (
-    client,
-    indexName,
-    query
-) => {
+async function initChain() {
+
+    const llm = new ChatOpenAI({});
 
     const index = client.Index(indexName);
 
-    const queryEmbedding = await new OpenAIEmbeddings().embedQuery(query);
-
-    let relevantDocuments = await index.query({
-        topK: 10,
-        vector: queryEmbedding, 
-        includeMetadata: true,
-        includeValues: true,
+    const vectorStore = await PineconeStore.fromExistingIndex(
+        new OpenAIEmbeddings({}),
+        {
+            pineconeIndex: index,
+            textKey: "pageContent"
         },
     );
 
-    // check that relevant documents were retrieved before calling LLM or not
-    if (relevantDocuments.matches.length) {
-        
-        const llm = new OpenAI({});
-        const chain = loadQAStuffChain(llm);
-
-        const fullContext = relevantDocuments.matches
-            .map((match) => match.metadata.pageContent)
-            .join(" ");
-
-        const result = await chain.call({
-            input_documents: [new Document({ pageContent: fullContext })],
-            question: query,
-        });
-
-        return result.text;
-    } else {
-        console.log(`No relevant documents were found so no call to LLM.`)
-    }
+    return ConversationalRetrievalQAChain.fromLLM(
+        llm,
+        vectorStore.asRetriever(),
+    );
 };
+
+export const chain = await initChain()

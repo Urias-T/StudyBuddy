@@ -1,20 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Pinecone } from "@pinecone-database/pinecone";
 import {
-    getRelevantDocumentsAndQueryLLM,
+    chain
 } from "../../../utils";
-import { indexName } from "../../../config";
 
 export async function POST(req: NextRequest) {
     const body = await req.json()
-    const client = new Pinecone({
-        apiKey: process.env.PINECONE_API_KEY || "",
-        environment: process.env.PINECONE_ENVIRONMENT || ""
-    })
 
-    const text = await getRelevantDocumentsAndQueryLLM(client, indexName, body);
+    console.log("body: ", body)
+
+    const query = body.query;
+    const history = body.history
+
+    const fullHistory = history.map(h => h.content).join(" ");
+    console.log("fullHistory: ", fullHistory)
+
+    const response = await chain.invoke({
+        question: query,
+        chat_history: fullHistory,
+    });
 
     return NextResponse.json({
-        data:text
+        role: "assistant",
+        content: response.text
     })
 }

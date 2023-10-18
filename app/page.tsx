@@ -6,6 +6,7 @@ import {
 export default function Home() {
   const [query, setQuery] = useState("")
   const [result, setResult] = useState("")
+  const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false)
 
   async function createIndexAndEmbeddings() {
@@ -25,14 +26,21 @@ export default function Home() {
     if (!query) return
     setResult("")
     setLoading(true)
+    setHistory((oldHistory) => [
+      ...oldHistory,
+      { role: "user", content: query },
+    ]);
 
+    console.log("history1: ", history)
     try {
       const result = await fetch("/api/read", {
         method: "POST",
-        body: JSON.stringify(query)
+        body: JSON.stringify({ query: query, history: history})
       })
       const json = await result.json()
-      setResult(json.data)
+      setHistory((oldHistory) => [...oldHistory, json])
+
+      setResult(json.content)
       setLoading(false)
     } catch (err) {
       console.log("error: ", err)
