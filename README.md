@@ -28,7 +28,11 @@ git clone https://github.com/Urias-T/StudyBuddy
 cd StudyBuddy
 ```
 
-3. Install dependencies either with npm or yarn
+3. Install dependencies :
+
+```
+npm install
+```
 
 4. Create a ```.env.local``` file and populate it with your "OPENAI_API_KEY", "PINECONE_API_KEY" and "PINECONE_ENVIRONMENT" variables.
    
