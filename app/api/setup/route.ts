@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Pinecone } from "@pinecone-database/pinecone";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
 import { 
@@ -7,6 +6,8 @@ import {
     updatePinecone 
 } from "../../../utils";
 import { indexName } from "../../../config";
+import { client } from "@/utils"
+
 
 export async function POST() {
     const loader = new DirectoryLoader("./documents", {
@@ -17,11 +18,6 @@ export async function POST() {
 
     const docs = await loader.load();
     const vectorDimension = 1536;
-
-    const client = new Pinecone ({
-        apiKey: process.env.PINECONE_API_KEY || "",
-        environment: process.env.PINECONE_ENVIRONMENT || ""
-    })
 
     try {
         await createPineconeIndex(client, indexName, vectorDimension);
