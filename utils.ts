@@ -88,7 +88,7 @@ export const updatePinecone = async (
 
 async function initChain() {
 
-    const llm = new ChatOpenAI({});
+    const llm = new ChatOpenAI({modelName: "gpt-3.5-turbo-16k"});
 
     const index = client.Index(indexName);
 
