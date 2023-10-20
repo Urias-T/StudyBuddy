@@ -31,7 +31,6 @@ export default function Home() {
       { role: "user", content: query },
     ]);
 
-    console.log("history1: ", history)
     try {
       const result = await fetch("/api/read", {
         method: "POST",
