@@ -1,6 +1,10 @@
 # StudyBuddy 🔍
 An AI-powered chat interface for querying PDF documents. Built using Langchain, OpenAI, Pinecone, and NextJS 13.
 
+## Architecture ⚙️
+
+![image](https://github.com/Urias-T/StudyBuddy/assets/51706516/d67725c9-e027-4198-96aa-a70dd8213fce)
+
 ## Running Locally 💻
 
 Follow these steps to set up and run the service locally :
