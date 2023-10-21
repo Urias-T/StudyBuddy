@@ -1,4 +1,4 @@
-# StudyBuddy
+# StudyBuddy 🔍
 An AI-powered chat interface for querying PDF documents. Built using Langchain, OpenAI, Pinecone, and NextJS 13.
 
 ## Running Locally 💻
@@ -45,3 +45,18 @@ npm run dev
 ```
 
 That's it! The web app would be running on ```localhost:3000```. 🤗
+
+## Usage 👍🏽
+The first time you run the app, you need to run the setup flow: 
+
+   1. Put your pdf files in the ```documents``` directory.
+   2. Click on the "Create index and embeddings" link to trigger the setup of your Pinecone index with your documents.
+
+After the initial setup, you only need to ask questions in the text box and the LLM would respond using your document embeddings as context. 
+
+## Contributing 🙌🏽
+If you want to contribute to this project, please open an issue and submit a pull request.
+
+
+## License ⚖️
+This project is made available under the [MIT License](https://github.com/Urias-T/StudyBuddy/blob/main/LICENSE). 
