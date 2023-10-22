@@ -1,4 +1,4 @@
-# StudyBuddy 🔍
+# StudyBuddy 📚🔍
 An AI-powered chat interface for querying PDF documents. Built using Langchain, OpenAI, Pinecone, and NextJS 13.
 
 ## Architecture ⚙️
