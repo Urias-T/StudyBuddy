@@ -103,6 +103,7 @@ async function initChain() {
     return ConversationalRetrievalQAChain.fromLLM(
         llm,
         vectorStore.asRetriever(),
+        {returnSourceDocuments: true}
     );
 };
 

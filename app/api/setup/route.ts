@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { TextLoader } from "langchain/document_loaders/fs/text";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
 import { 
@@ -7,10 +8,14 @@ import {
 } from "../../../utils";
 import { indexName } from "../../../config";
 import { client } from "@/utils"
+import { DocxLoader } from "langchain/document_loaders/fs/docx";
 
 
 export async function POST() {
     const loader = new DirectoryLoader("./documents", {
+        ".txt": (path) => new TextLoader(path),
+        ".md": (path) => new TextLoader(path),
+        ".docx": (path) => new DocxLoader(path),
         ".pdf": (path) => new PDFLoader(path, {
             splitPages: false
         })
@@ -30,3 +35,6 @@ export async function POST() {
         "data": "Successfully created index and loaded data into Pinecone."
     })
 }
+
+// TO-DO:
+// Include support for more data types and show sources in response to user queries...

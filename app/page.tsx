@@ -8,6 +8,7 @@ export default function Home() {
   const [result, setResult] = useState("")
   const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false)
+  const [sources, setSources] = useState<{ loc: string; txtPath: string }[]>([]);
 
   async function createIndexAndEmbeddings() {
     try {
@@ -24,6 +25,7 @@ export default function Home() {
 
   async function sendQuery() {
     if (!query) return
+    setSources([])
     setResult("")
     setLoading(true)
     setHistory((oldHistory) => [
@@ -37,6 +39,9 @@ export default function Home() {
         body: JSON.stringify({ query: query, history: history})
       })
       const json = await result.json()
+      setSources(json.sources);
+
+      delete json.sources  // delete the sources array from teh result to be added to the state
       setHistory((oldHistory) => [...oldHistory, json])
 
       setResult(json.content)
@@ -56,6 +61,17 @@ export default function Home() {
       }
       {
         result && <p>{result}</p>
+      }
+      {
+        sources && (
+          <ul>
+            {sources.map((source, index) => (
+              <li key={index}>
+                Location: {source.loc}, Path: {source.txtPath}
+              </li>
+            ))}
+          </ul>
+        )
       }
       <button onClick={createIndexAndEmbeddings}>Create Index and Embeddings</button>
     </main>
