@@ -60,7 +60,10 @@ export default function Home() {
         loading && <p>Thinking...</p>
       }
       {
-        result && <p>{result}</p>
+        result && <><p>{result}</p>
+        <><br></br></>
+        <p>Source Documents:</p>
+        </>
       }
       {
         sources && (
@@ -73,6 +76,10 @@ export default function Home() {
           </ul>
         )
       }
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
       <button onClick={createIndexAndEmbeddings}>Create Index and Embeddings</button>
     </main>
   )
