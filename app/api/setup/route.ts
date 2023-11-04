@@ -35,6 +35,3 @@ export async function POST() {
         "data": "Successfully created index and loaded data into Pinecone."
     })
 }
-
-// TO-DO:
-// Include support for more data types and show sources in response to user queries...
