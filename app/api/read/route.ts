@@ -16,8 +16,12 @@ export async function POST(req: NextRequest) {
         chat_history: fullHistory,
     });
 
+    const sources: any[] = response.sourceDocuments.map((document: { metadata: any }) => document.metadata);
+
+
     return NextResponse.json({
         role: "assistant",
-        content: response.text
+        content: response.text,
+        sources: sources
     })
 }
