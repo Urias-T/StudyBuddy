@@ -9,7 +9,7 @@ export default function Home() {
   const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false)
   const [sources, setSources] = useState<{ loc: string; txtPath: string }[]>([]);
-  const [file, setFile] = useState<File>();
+  const [files, setFiles] = useState<File []>([]);
 
   async function createIndexAndEmbeddings() {
     try {
@@ -55,11 +55,13 @@ export default function Home() {
 
   const uploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!file) return
+    if (!files) return
 
     try {
       const data = new FormData()
-      data.set("file", file)
+      for (let i = 0; i < files.length; i++){
+        data.append("files[]", files[i]);
+      }
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -72,22 +74,28 @@ export default function Home() {
     }
   }
 
+  const handleFileChange = (e) => {
+    const selectedFiles = e.target.files;
+    setFiles([...files, ...selectedFiles]);
+  }
+
   return (
     <main className="flex flex-col items-center justify-between p-24">
       <form onSubmit={uploadFile}>
         <input
           type="file"
           name="file"
-          onChange={(e) => setFile(e.target.files?.[0])}
+          onChange={handleFileChange}
+          multiple
           />
-        <input type="submit" value="upload" />
+        <input type="submit" value="Upload" />
       </form>
 
       <br></br>
       <br></br>
       <br></br>
       <br></br>
-      
+
       <input className="text-black px-2 py-1" onChange={e => setQuery(e.target.value)}/>
       <button className="px-7 py-1 rounded-2x1 bg-white text-black mt-2 mb-2" onClick={sendQuery}>Ask AI</button>
       {
