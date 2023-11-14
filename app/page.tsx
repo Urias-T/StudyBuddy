@@ -82,6 +82,12 @@ export default function Home() {
           />
         <input type="submit" value="upload" />
       </form>
+
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      
       <input className="text-black px-2 py-1" onChange={e => setQuery(e.target.value)}/>
       <button className="px-7 py-1 rounded-2x1 bg-white text-black mt-2 mb-2" onClick={sendQuery}>Ask AI</button>
       {
