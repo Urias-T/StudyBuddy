@@ -9,6 +9,7 @@ export default function Home() {
   const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false)
   const [sources, setSources] = useState<{ loc: string; txtPath: string }[]>([]);
+  const [file, setFile] = useState<File>();
 
   async function createIndexAndEmbeddings() {
     try {
@@ -52,8 +53,35 @@ export default function Home() {
     }
   }
 
+  const uploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!file) return
+
+    try {
+      const data = new FormData()
+      data.set("file", file)
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: data
+      })
+
+      if (!res.ok) throw new Error(await res.text())
+    } catch (e: any) {
+      console.error(e)
+    }
+  }
+
   return (
     <main className="flex flex-col items-center justify-between p-24">
+      <form onSubmit={uploadFile}>
+        <input
+          type="file"
+          name="file"
+          onChange={(e) => setFile(e.target.files?.[0])}
+          />
+        <input type="submit" value="upload" />
+      </form>
       <input className="text-black px-2 py-1" onChange={e => setQuery(e.target.value)}/>
       <button className="px-7 py-1 rounded-2x1 bg-white text-black mt-2 mb-2" onClick={sendQuery}>Ask AI</button>
       {
