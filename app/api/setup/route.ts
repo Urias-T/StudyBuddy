@@ -4,10 +4,11 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
 import { 
     createPineconeIndex, 
-    updatePinecone 
+    updatePinecone,
+    client 
 } from "../../../utils";
 import { indexName } from "../../../config";
-import { client } from "@/utils"
+// import { client } from "@/utils"
 import { DocxLoader } from "langchain/document_loaders/fs/docx";
 
 
