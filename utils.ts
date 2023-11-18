@@ -5,6 +5,10 @@ import { ConversationalRetrievalQAChain } from "langchain/chains";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { ChatOpenAI } from "langchain/chat_models/openai";
+import {
+  CUSTOM_QUESTION_GENERATOR_CHAIN_PROMPT,
+  QA_CHAIN_PROMPT,
+} from "./prompts";
 
 export const client = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY || "",
@@ -91,7 +95,17 @@ async function initChain() {
   return ConversationalRetrievalQAChain.fromLLM(
     llm,
     vectorStore.asRetriever(),
-    { returnSourceDocuments: true }
+    {
+      returnSourceDocuments: true,
+      questionGeneratorChainOptions: {
+        template: CUSTOM_QUESTION_GENERATOR_CHAIN_PROMPT,
+      },
+      qaChainOptions: {
+        type: "stuff",
+        prompt: QA_CHAIN_PROMPT
+      },
+    verbose: true
+    }
   );
 }
 
