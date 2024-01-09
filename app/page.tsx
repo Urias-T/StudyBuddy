@@ -110,7 +110,7 @@ export default function Home() {
           <>
             <br></br>
           </>
-          <p>Source Documents:</p>
+          <p>Referenced Documents:</p>
         </>
       )}
       {sources && (
