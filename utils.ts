@@ -9,6 +9,7 @@ import {
   CUSTOM_QUESTION_GENERATOR_CHAIN_PROMPT,
   QA_CHAIN_PROMPT,
 } from "./prompts";
+import { MultiQueryRetriever } from "langchain/retrievers/multi_query";
 
 export const client = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY || "",
@@ -92,9 +93,15 @@ async function initChain() {
     }
   );
 
+  const retriever = MultiQueryRetriever.fromLLM({
+    llm: llm,
+    retriever: vectorStore.asRetriever(),
+    verbose: true
+  })
+
   return ConversationalRetrievalQAChain.fromLLM(
     llm,
-    vectorStore.asRetriever(),
+    retriever,
     {
       returnSourceDocuments: true,
       questionGeneratorChainOptions: {
