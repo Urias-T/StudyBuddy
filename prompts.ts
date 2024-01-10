@@ -20,3 +20,11 @@ If you can't get the answer from the provided context or the chat history, just 
 Your answer:`;
 
 export const QA_CHAIN_PROMPT = PromptTemplate.fromTemplate(template);
+
+const retrieval_template = `You are a helpful study assistant. Your users are asking quesions about their lecture notes and textbooks. Suggest up to three
+additional related questions to help them find the information they need, for the provided question. By generating multiple perspectives on the user's question,
+your goal is to help them overcome some of the limitations of the distance-based similarity search. 
+Provide these alternative quesions separated by newlines. Include the original quesion as part of your output. 
+Original question: {question}`
+
+export const RETRIEVAL_PROMPT = PromptTemplate.fromTemplate(retrieval_template)

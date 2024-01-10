@@ -1,15 +1,46 @@
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { timeout, indexName } from "./config";
-import { ConversationalRetrievalQAChain } from "langchain/chains";
+import { ConversationalRetrievalQAChain, LLMChain } from "langchain/chains";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import {
   CUSTOM_QUESTION_GENERATOR_CHAIN_PROMPT,
-  QA_CHAIN_PROMPT,
+  QA_CHAIN_PROMPT, RETRIEVAL_PROMPT
 } from "./prompts";
 import { MultiQueryRetriever } from "langchain/retrievers/multi_query";
+import { BaseOutputParser } from "langchain/schema/output_parser";
+
+type LineList = {
+  lines: string[];
+};
+
+class LineListOutputParser extends BaseOutputParser<LineList> {
+  static lc_name() {
+    return "LineListOutputParser";
+  }
+
+  lc_namespace = ["langchain", "retrievers", "multiquery"];
+
+  async parse(text: string): Promise<LineList> {
+    const startKeyIndex = text.indexOf("<questions>");
+    const endKeyIndex = text.indexOf("</questions>");
+    const questionsStartIndex =
+      startKeyIndex === -1 ? 0 : startKeyIndex + "<questions>".length;
+    const questionsEndIndex = endKeyIndex === -1 ? text.length : endKeyIndex;
+    const lines = text
+      .slice(questionsStartIndex, questionsEndIndex)
+      .trim()
+      .split("\n")
+      .filter((line) => line.trim() !== "");
+    return { lines };
+  }
+
+  getFormatInstructions(): string {
+    throw new Error("Not implemented.");
+  }
+}
 
 export const client = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY || "",
@@ -93,9 +124,15 @@ async function initChain() {
     }
   );
 
-  const retriever = MultiQueryRetriever.fromLLM({
+  const llmChain = new LLMChain({
     llm: llm,
+    prompt: RETRIEVAL_PROMPT,
+    outputParser: new LineListOutputParser()
+  })
+
+  const retriever = new MultiQueryRetriever({
     retriever: vectorStore.asRetriever(),
+    llmChain,
     verbose: true
   })
 
