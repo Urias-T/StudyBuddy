@@ -55,6 +55,11 @@ export default function Home() {
     }
   }
 
+  async function clearChatHistory() {
+    setHistory([]);
+    console.log("Chat history cleared successfully!")
+  }
+
   const uploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files) return;
@@ -122,6 +127,11 @@ export default function Home() {
           ))}
         </ul>
       )}
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <button onClick={clearChatHistory}>Clear History</button>
       <br></br>
       <br></br>
       <br></br>
