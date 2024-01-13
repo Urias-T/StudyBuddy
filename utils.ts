@@ -133,7 +133,7 @@ async function initChain() {
   const retriever = new MultiQueryRetriever({
     retriever: vectorStore.asRetriever(),
     llmChain,
-    verbose: true
+    // verbose: true
   })
 
   return ConversationalRetrievalQAChain.fromLLM(
@@ -148,7 +148,7 @@ async function initChain() {
         type: "stuff",
         prompt: QA_CHAIN_PROMPT
       },
-    verbose: true
+    // verbose: true
     }
   );
 }
